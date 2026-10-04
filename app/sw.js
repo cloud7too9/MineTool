@@ -4,7 +4,8 @@
    Ziel: Die App startet auch ohne Netz (Home-Bildschirm, Flugmodus) und bleibt
    trotzdem immer aktuell.
      Seite, Skripte, JSON  → network-first: online immer frisch, offline aus dem Cache
-     Bilder (Icons, Baukasten-Texturen) und three.js vom CDN → cache-first
+     Bilder (Icons, Baukasten-Texturen) → cache-first
+     Fremde Adressen (three.js vom CDN) → nie; offline zeigt die Rüstung dann die 2D-Figur
      /api, /ws, /anzeige, /dashboard, /assets (alte Anzeige) und alles außer GET → nie angefasst (Daten kommen vom Board)
    Die Seite kommt vom Board bewusst ohne Cache (OHNE_CACHE); network-first
    passt dazu, ein „neue Version → neu laden“ braucht es so nicht.
@@ -28,7 +29,6 @@ const SHELL = [
   "ruestungs-baukasten/baukasten.js",
   "ruestungs-baukasten/figur3d.js",
 ];
-const CDN = ["https://cdnjs.cloudflare.com/"];
 const NIE = /^\/(api|ws|anzeige|dashboard|assets)(\/|$)/;
 const BILD = /\.(png|jpe?g|gif|webp|svg)$/i;
 
@@ -55,11 +55,10 @@ self.addEventListener("fetch", (e) => {
   if (req.method !== "GET") return;
   const url = new URL(req.url);
   const eigen = url.origin === self.location.origin;
-  if (eigen && NIE.test(url.pathname)) return;
-  if (!eigen && !CDN.some((p) => req.url.startsWith(p))) return;
+  if (!eigen || NIE.test(url.pathname)) return;
 
   if (req.mode === "navigate") return e.respondWith(seiteHolen(req));
-  if (!eigen || BILD.test(url.pathname)) return e.respondWith(cacheZuerst(req));
+  if (BILD.test(url.pathname)) return e.respondWith(cacheZuerst(req));
   e.respondWith(netzZuerst(req));
 });
 
@@ -90,7 +89,6 @@ async function cacheZuerst(req) {
   const treffer = await cache.match(req);
   if (treffer) return treffer;
   const res = await fetch(req);
-  // opaque (CDN ohne CORS) ist ok: wird nur als <script> genutzt
-  if (res.ok || res.type === "opaque") cache.put(req, res.clone());
+  if (res.ok) cache.put(req, res.clone());
   return res;
 }

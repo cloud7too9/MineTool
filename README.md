@@ -69,7 +69,8 @@ Die Erkennung: `GET /api/server` muss `{ name: "koordinaten-board" }` liefern. L
 
 **Service Worker (`app/sw.js`):**
 - Seite, Skripte, JSON: **network-first.** Online kommt immer der aktuelle Stand, offline die letzte Version aus dem Cache. Ein „neue Version verfügbar“ braucht es dadurch nicht.
-- Bilder und three.js vom CDN: **cache-first.** Die rund 1.100 Rüstungs-Icons werden beim ersten Ansehen gecacht, nicht vorab.
+- Bilder: **cache-first.** Die rund 1.100 Rüstungs-Icons werden beim ersten Ansehen gecacht, nicht vorab.
+- Fremde Adressen (three.js vom CDN) fasst er nicht an. Offline zeigt die Rüstung deshalb die 2D-Figur statt der 3D-Figur.
 - Nie angefasst: `/api`, `/ws`, `/anzeige`, `/dashboard`, `/assets` und alles außer GET. Daten kommen immer vom Board.
 - `VERSION` in `sw.js` hochzählen, wenn sich die Liste der Shell-Dateien ändert. Alte `companion-*`-Caches werden beim Aktivieren gelöscht.
 
