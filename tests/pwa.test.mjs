@@ -34,7 +34,7 @@ test("Manifest ist verlinkt, vollständig und alle Icons laden", async () => {
   assert.equal(res.status(), 200);
   assert.match(res.headers()["content-type"], /manifest\+json/);
   const m = await res.json();
-  assert.equal(m.short_name, "MineTool");
+  assert.equal(m.short_name, "Companion");
   assert.equal(m.display, "standalone");
   assert.ok(m.icons.some((i) => i.sizes === "512x512" && i.purpose === "maskable"));
   for (const icon of [...m.icons.map((i) => i.src), "app-icons/apple-touch-icon.png", "app-icons/favicon-32.png"])
@@ -56,7 +56,7 @@ test("Start ohne Netz: App lädt aus dem Cache und läuft als Demo", async () =>
   await seite.reload();
   await seite.waitForFunction(() => document.getElementById("orteStatusLab")?.textContent === "Demo");
   await seite.waitForFunction(() => /Welt 68891/.test(document.querySelector("header")?.innerText || ""));   // Demo-Welt gezeichnet
-  assert.equal(await seite.title(), "MineTool · Minecraft Companion");
+  assert.equal(await seite.title(), "Companion · Minecraft");
   assert.ok(await seite.evaluate(() => typeof DIM_ORDER !== "undefined"),
     "regeln.js kommt aus dem Cache");
   await seite.screenshot({ path: ERGEBNISSE + "offline-start.png" });

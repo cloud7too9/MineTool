@@ -1,22 +1,23 @@
 /* ============================================================================
-   MineTool · Service Worker
+   Companion · Service Worker
    ----------------------------------------------------------------------------
    Ziel: Die App startet auch ohne Netz (Home-Bildschirm, Flugmodus) und bleibt
    trotzdem immer aktuell.
      Seite, Skripte, JSON  → network-first: online immer frisch, offline aus dem Cache
      Bilder (Icons, Baukasten-Texturen) und three.js vom CDN → cache-first
-     /api, /ws, /anzeige, /dashboard und alles außer GET → nie angefasst (Daten kommen vom Board)
+     /api, /ws, /anzeige, /dashboard, /assets (alte Anzeige) und alles außer GET → nie angefasst (Daten kommen vom Board)
    Die Seite kommt vom Board bewusst ohne Cache (OHNE_CACHE); network-first
    passt dazu, ein „neue Version → neu laden“ braucht es so nicht.
    VERSION hochzählen, wenn sich die Liste der Shell-Dateien ändert.
    ========================================================================== */
 const VERSION = "v1";
-const CACHE = `minetool-${VERSION}`;
+const CACHE = `companion-${VERSION}`;
 
 // App-Shell: was für den ersten Start ohne Netz da sein muss
 const SHELL = [
   "./",
   "regeln.js",
+  "board-karten.js",
   "manifest.webmanifest",
   "app-icons/icon-192.png",
   "app-icons/icon-512.png",
@@ -28,7 +29,7 @@ const SHELL = [
   "ruestungs-baukasten/figur3d.js",
 ];
 const CDN = ["https://cdnjs.cloudflare.com/"];
-const NIE = /^\/(api|ws|anzeige|dashboard)(\/|$)/;
+const NIE = /^\/(api|ws|anzeige|dashboard|assets)(\/|$)/;
 const BILD = /\.(png|jpe?g|gif|webp|svg)$/i;
 
 self.addEventListener("install", (e) => {
@@ -44,7 +45,7 @@ self.addEventListener("install", (e) => {
 self.addEventListener("activate", (e) => {
   e.waitUntil((async () => {
     for (const name of await caches.keys())
-      if (name.startsWith("minetool-") && name !== CACHE) await caches.delete(name);
+      if (name.startsWith("companion-") && name !== CACHE) await caches.delete(name);
     await self.clients.claim();
   })());
 });

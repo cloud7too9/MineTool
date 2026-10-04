@@ -34,5 +34,5 @@ export async function appAusliefern(port = 8080, host = "127.0.0.1") {
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const { adresse } = await appAusliefern(Number(process.env.PORT) || 8080, process.env.HOST || "0.0.0.0");
-  console.log(`MineTool läuft (Demo ohne Board): ${adresse}`);
+  console.log(`Companion läuft (Demo ohne Board): ${adresse}`);
 }

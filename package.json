@@ -1,8 +1,8 @@
 {
-  "name": "minetool",
+  "name": "companion",
   "private": true,
   "type": "module",
-  "description": "MineTool – Minecraft Companion als installierbare PWA",
+  "description": "Companion – die Minecraft-App am Handy, als installierbare PWA",
   "scripts": {
     "start": "node tools/server.mjs",
     "icons": "node tools/icons-bauen.mjs",
